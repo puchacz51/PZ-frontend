@@ -1,3 +1,4 @@
+import MainLayout from "@/components/common/MainLayout";
 import AuthPage from "@/pages/auth/AuthPage";
 import LoginPage from "@/pages/auth/forms/login";
 import RegisterPage from "@/pages/auth/forms/register";
@@ -8,8 +9,9 @@ export { RouterProvider };
 export { Link } from "@tanstack/react-router";
 export { useRouter } from "@tanstack/react-router";
 
-const rootRoute = createRootRoute();
-
+const rootRoute = createRootRoute({
+    component: MainLayout,
+});
 const indexRoute = createRoute({
     getParentRoute: () => rootRoute,
     path: "/",
