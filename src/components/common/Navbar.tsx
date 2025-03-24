@@ -5,6 +5,7 @@ import { LogIn, Menu } from "lucide-react";
 import { Link, useLocation } from "@tanstack/react-router";
 import { useUser } from "@/context/UserContext";
 import Sidebar from "./Sidebar";
+import Logo from "./Logo";
 
 const Navbar = () => {
     const { user } = useUser();
@@ -14,9 +15,10 @@ const Navbar = () => {
     return (
         <>
             <nav className="bg-black/10 shadow-lg border-b border-white/10 px-4 py-2 flex justify-between items-center z-50 backdrop-blur-md w-full h-14 fixed z-100">
-                <Button variant="ghost" onClick={() => setMenuOpen(true)} className={`text-white ${user ? '' : "opacity-0"}`}>
+                <Button variant="ghost" onClick={() => setMenuOpen(true)} className={`text-white ${user ? '' : "hidden"}`}>
                     <Menu className="h-6 w-6" />
                 </Button>
+                <Logo />
 
                 {user ? (
                     <Avatar className="cursor-pointer hover:ring-2 hover:ring-white transition-all">
