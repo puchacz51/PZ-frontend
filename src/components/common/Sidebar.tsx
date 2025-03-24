@@ -20,7 +20,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
     return (
         <>
             <div className={clsx(
-                "fixed top-0 left-0 h-screen w-64 bg-black border-r border-white/10 shadow-lg z-50 transition-transform duration-300 ease-in-out",
+                "fixed top-0 left-0 h-screen w-64 bg-black border-r border-white/10 shadow-lg z-50 transition-transform duration-300 ease-in-out z-101",
                 isOpen ? "translate-x-0" : "-translate-x-full"
             )}>
                 <div className="flex flex-col h-full">

@@ -23,7 +23,7 @@ const HomePage = () => {
         <div className="relative w-screen h-screen overflow-hidden">
             <Background videoSrc={stars} isFixed={true} playbackRate={1.0} />
 
-            <div className="relative flex flex-col justify-center items-center min-h-screen px-4 z-50">
+            <div className="relative flex flex-col justify-center items-center min-h-screen px-4">
                 <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold text-white text-center flex items-center mb-5">
                     <span>Organizuj</span>
                     <FaBolt className="mx-3 text-white mix-blend-difference" />
