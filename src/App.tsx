@@ -1,11 +1,20 @@
-import { RouterProvider } from './router/router';
-import { router } from './router/router'; 
+import { UserProvider, useUser } from "./context/UserContext";
+import { RouterProvider } from "./router/router";
+import { router } from "./router/router";
+
+const InnerApp = () => {
+    const userContext = useUser();
+    return <RouterProvider router={router} context={userContext}></RouterProvider>
+}
 
 function App() {
-
-  return (
-    <RouterProvider router={router}></RouterProvider>
-  );
+    
+    
+    return (
+        <UserProvider>
+            <InnerApp />
+        </UserProvider>
+    );
 }
 
 export default App;

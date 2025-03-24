@@ -1,37 +1,24 @@
-import { Link, Outlet, useLocation } from '@tanstack/react-router';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import Background from "@/components/ui/Background";
+import stars from "../../../public/media/stars.webm";
+import LoginForm from "./forms/LoginForm";
+import { useState } from "react";
+import RegisterForm from "./forms/RegisterForm";
+import { Card } from "@/components/ui/card";
 
-const AuthPage= () => {
-  const location = useLocation();
+const AuthPage = () => {
+    const [isLoginForm, setIsLoginForm] = useState(true);
 
-  const isAuthRoute = location.pathname === '/auth/login' || location.pathname === '/auth/register';
-  if (isAuthRoute) {
-    return <Outlet />;
-  }
+    return (
+        <div className="relative w-screen h-screen">
+            <Background videoSrc={stars} isFixed={true} playbackRate={1.0} />
 
-  return (
-    <div className="flex justify-center items-center h-screen bg-black">
-      <Card className="w-96 backdrop-blur-xl bg-white/10 border-white/20 shadow-2xl rounded-2xl text-center">
-        <CardHeader>
-          <CardTitle className="text-3xl font-semibold text-white">
-            Autentykacja
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-gray-300 mb-6">Wybierz akcję:</p>
-          <div className="space-x-4">
-            <Button asChild className="bg-white text-black hover:bg-white/80 font-semibold transition-colors">
-              <Link to="/auth/login">Logowanie</Link>
-            </Button>
-            <Button asChild className="bg-white text-black hover:bg-white/80 font-semibold transition-colors">
-              <Link to="/auth/register">Rejestracja</Link>
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  );
+            <div className="flex justify-center items-center min-h-screen bg-black px-4">
+                <Card className="w-full max-w-md bg-white/5 border border-white/20 shadow-2xl backdrop-blur-xl rounded-2xl backdrop-blur-sm">
+                    {isLoginForm ? <LoginForm setIsLoginForm={setIsLoginForm} /> : <RegisterForm setIsLoginForm={setIsLoginForm} />}
+                </Card>
+            </div>
+        </div>
+    );
 };
 
 export default AuthPage;
