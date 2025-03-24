@@ -13,7 +13,7 @@ const Navbar = () => {
 
     return (
         <>
-            <nav className="bg-black/10 shadow-lg border-b border-white/10 px-4 py-2 flex justify-between items-center z-50 backdrop-blur-md w-full h-14 fixed">
+            <nav className="bg-black/10 shadow-lg border-b border-white/10 px-4 py-2 flex justify-between items-center z-50 backdrop-blur-md w-full h-14 fixed z-100">
                 <Button variant="ghost" onClick={() => setMenuOpen(true)} className={`text-white ${user ? '' : "opacity-0"}`}>
                     <Menu className="h-6 w-6" />
                 </Button>
