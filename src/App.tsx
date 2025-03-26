@@ -1,6 +1,8 @@
+import { Suspense } from "react";
 import { UserProvider, useUser } from "./context/UserContext";
 import { RouterProvider } from "./router/router";
 import { router } from "./router/router";
+import Loading from "./components/ui/Loading";
 
 const InnerApp = () => {
     const userContext = useUser();
@@ -8,11 +10,11 @@ const InnerApp = () => {
 }
 
 function App() {
-    
-    
     return (
         <UserProvider>
-            <InnerApp />
+            <Suspense fallback={<Loading />}>
+                <InnerApp />
+            </Suspense>
         </UserProvider>
     );
 }

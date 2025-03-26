@@ -10,6 +10,8 @@ export { useRouter } from "@tanstack/react-router";
 
 const AuthPage = lazy(() => import('@/pages/auth/AuthPage'));
 const ProjectsPage = lazy(() => import('@/pages/projects/ProjectsPage'));
+const SettingsPage = lazy(() => import('@/pages/settings/SettingsPage'));
+const ChatPage = lazy(() => import('@/pages/chat/ChatPage'));
 
 
 const rootRoute = createRootRoute({
@@ -20,12 +22,6 @@ const indexRoute = createRoute({
     getParentRoute: () => rootRoute,
     path: "/",
     component: HomePage,
-    // beforeLoad: async (ctx) => {
-    //     const context = ctx.context as IUserContextType;
-    //     if (!await context.authenticateUser()) {
-    //         return redirect({ to: "/auth" });
-    //     }
-    // },
 });
 
 const authRoute = createRoute({
@@ -52,7 +48,31 @@ const projectsRoute = createRoute({
     },
 });
 
-const routeTree = rootRoute.addChildren([indexRoute, authRoute, projectsRoute]);
+const settingsRoute = createRoute({
+    getParentRoute: () => rootRoute,
+    path: "/settings",
+    component: SettingsPage,
+    beforeLoad: async (ctx) => {
+        const context = ctx.context as IUserContextType;
+        if (!await context.authenticateUser()) {
+            return redirect({ to: "/auth" });
+        }
+    },
+});
+
+const chatRoute = createRoute({
+    getParentRoute: () => rootRoute,
+    path: "/chat",
+    component: ChatPage,
+    beforeLoad: async (ctx) => {
+        const context = ctx.context as IUserContextType;
+        if (!await context.authenticateUser()) {
+            return redirect({ to: "/auth" });
+        }
+    },
+});
+
+const routeTree = rootRoute.addChildren([indexRoute, authRoute, projectsRoute, settingsRoute, chatRoute]);
 
 export const router = createRouter({ 
     routeTree,

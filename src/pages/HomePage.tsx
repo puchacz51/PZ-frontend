@@ -10,9 +10,8 @@ const HomePage = () => {
 
     const renderLogIn = () => {
         return (
-            <Link to="/auth" className="flex items-center">
-                <Button className="
-                ,mt-6 bg-white text-black text-xl hover:bg-white/80 font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center px-6 py-3 rounded-xl shadow-lg backdrop-blur-sm">
+            <Link to="/auth" className="flex items-center mix-blend-difference">
+                <Button className="mix-blend-difference mt-6 bg-white/5 text-white border-2 border-white text-xl hover:bg-white hover:text-black font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center px-6 py-3 rounded-xl shadow-lg backdrop-blur-sm transition-all hover:shadow-white/40 duration-700 ease-in-out">
                     Zacznij już dziś 🚀
                 </Button>
             </Link>
@@ -23,8 +22,8 @@ const HomePage = () => {
         <div className="relative w-screen h-screen overflow-hidden">
             <Background videoSrc={stars} isFixed={true} playbackRate={1.0} />
 
-            <div className="relative flex flex-col justify-center items-center min-h-screen px-4">
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold text-white text-center flex items-center mb-5">
+            <div className="relative flex flex-col justify-center items-center min-h-full px-4">
+                <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold text-white mix-blend-difference text-center flex items-center mb-5">
                     <span>Organizuj</span>
                     <FaBolt className="mx-3 text-white mix-blend-difference" />
                     <span>Zwyciężaj</span>

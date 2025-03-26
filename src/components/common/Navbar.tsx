@@ -14,26 +14,27 @@ const Navbar = () => {
 
     return (
         <>
-            <nav className="bg-black/10 shadow-lg border-b border-white/10 px-4 py-2 flex justify-between items-center z-50 backdrop-blur-md w-full h-14 fixed z-100">
-                <Button variant="ghost" onClick={() => setMenuOpen(true)} className={`text-white ${user ? '' : "hidden"}`}>
+            <nav className="bg-black/10 shadow-lg border-b border-white/10 px-4 py-2 flex justify-between items-center z-50 backdrop-blur-md w-full h-14 fixed top-0 z-100">
+                <Button variant="ghost" onClick={() => setMenuOpen(true)} className={`text-white ${user ? "" : "hidden"}`}>
                     <Menu className="h-6 w-6" />
                 </Button>
                 <Logo />
 
                 {user ? (
-                    <Avatar className="cursor-pointer hover:ring-2 hover:ring-white transition-all">
-                        {user?.avatarUrl ? <AvatarImage src={user.avatarUrl} alt="user avatar" /> : (
-                            <AvatarFallback className="bg-white/20 text-white font-semibold uppercase">
-                                {user.firstName?.charAt(0)}
-                                {user.lastName?.charAt(0)}
-                            </AvatarFallback>
-                        )}
-                    </Avatar>
+                    <Link to="/settings">
+                        <Avatar className="cursor-pointer hover:ring-2 hover:ring-white transition-all">
+                            {user?.avatarUrl ? (
+                                <AvatarImage src={user.avatarUrl} alt="user avatar" />
+                            ) : (
+                                <AvatarFallback className="bg-white/20 text-white font-semibold uppercase">
+                                    {user.firstName?.charAt(0)}
+                                    {user.lastName?.charAt(0)}
+                                </AvatarFallback>
+                            )}
+                        </Avatar>
+                    </Link>
                 ) : (
-                    <Button
-                        className="bg-white text-black hover:bg-white/80 font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
-                        disabled={location.pathname === "/auth"}
-                    >
+                    <Button className="bg-white text-black hover:bg-white/80 font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center" disabled={location.pathname === "/auth"}>
                         <Link to="/auth" className="flex items-center">
                             <LogIn className="mr-2 h-4 w-4" />
                             Zaloguj
