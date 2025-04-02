@@ -1,23 +1,19 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { useUser } from "@/context/UserContext"
+import { ChatMessage as ChatMessageType } from "@/types/chat"
+import { format } from "date-fns"
 
 interface ChatMessageProps {
-  message: {
-    sender: {
-      firstName: string
-      lastName: string
-      avatarUrl?: string
-    }
-    message: string
-    timestamp: string
-  }
+  message: ChatMessageType
 }
 
 const ChatMessage = ({ message }: ChatMessageProps) => {
-  const isUser = message.sender.firstName === "Jan"
+  const { user } = useUser()
+  const isCurrentUser = user?.id === message.sender.id
 
   return (
-    <div className={`flex w-full ${isUser ? "justify-end" : "justify-start"}`}>
-      <div className={`flex items-end gap-3 max-w-[80%] ${isUser ? "flex-row-reverse" : ""}`}>
+    <div className={`flex w-full mb-4 ${isCurrentUser ? "justify-end" : "justify-start"}`}>
+      <div className={`flex items-end gap-3 max-w-[80%] ${isCurrentUser ? "flex-row-reverse" : ""}`}>
         <Avatar className="cursor-pointer hover:ring-2 hover:ring-white transition-all">
           {message.sender.avatarUrl ? (
             <AvatarImage src={message.sender.avatarUrl} alt="user avatar" />
@@ -28,10 +24,19 @@ const ChatMessage = ({ message }: ChatMessageProps) => {
             </AvatarFallback>
           )}
         </Avatar>
-        <div className={`rounded-xl px-4 py-2 text-sm bg-white/10`}>
-          <p>{message.message}</p>
+        <div className={`rounded-xl px-4 py-2 text-sm ${
+          isCurrentUser 
+            ? "bg-blue-600/30 border border-blue-700/50"
+            : "bg-white/10 border border-white/20"
+        }`}>
+          {!isCurrentUser && (
+            <p className="text-xs font-medium text-white/70 mb-1">
+              {message.sender.firstName} {message.sender.lastName}
+            </p>
+          )}
+          <p className="whitespace-pre-wrap break-words">{message.content}</p>
           <span className="block mt-1 text-[10px] text-white/50">
-            {new Date(message.timestamp).toLocaleTimeString()}
+            {format(new Date(message.timestamp), "HH:mm")}
           </span>
         </div>
       </div>

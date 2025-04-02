@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { LogOut, MessageCircle, FolderKanban, Mail, X } from "lucide-react";
 import clsx from "clsx";
 import { useUser } from "@/context/UserContext";
+import { useChat } from "@/context/ChatContext";
 
 interface SidebarProps {
     isOpen: boolean;
@@ -11,9 +12,15 @@ interface SidebarProps {
 
 const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
     const { logout } = useUser();
+    const { unreadMessages, markAllAsRead } = useChat();
 
     const handleLogout = () => {
         logout();
+        onClose();
+    };
+    
+    const handleChatClick = () => {
+        markAllAsRead();
         onClose();
     };
 
@@ -43,9 +50,14 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
                                 <Mail size={18} />
                                 Kontakt
                             </Link>
-                            <Link to="/chat" onClick={onClose} className="flex items-center gap-2 hover:underline hover:font-semibold">
+                            <Link to="/chat" onClick={handleChatClick} className="flex items-center gap-2 hover:underline hover:font-semibold">
                                 <MessageCircle size={18} />
                                 Chat
+                                {unreadMessages > 0 && (
+                                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white">
+                                        {unreadMessages > 9 ? '9+' : unreadMessages}
+                                    </span>
+                                )}
                             </Link>
                         </div>
 

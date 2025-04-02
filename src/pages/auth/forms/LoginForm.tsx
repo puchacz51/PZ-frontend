@@ -21,6 +21,7 @@ const LoginForm = ({ setIsLoginForm }: { setIsLoginForm: (isLoginForm: boolean) 
         e.preventDefault();
         sessionStorage.setItem("user", JSON.stringify(exampleUser));
         setUser(exampleUser);
+        
         navigate({ to: "/" });
     }
     
