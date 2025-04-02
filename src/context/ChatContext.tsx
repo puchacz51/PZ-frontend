@@ -54,7 +54,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     newSocket.on("message", (message: ChatMessage) => {
       setMessages((prev) => [...prev, message]);
       
-      if (message.sender.id !== user.id) {
+      if ((message.sender.id !== user.id) && !window.location.href.includes("/chat")) {
         setUnreadMessages(prev => prev + 1);
         
         toast.info(
@@ -62,13 +62,6 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
             <p className="font-bold">{message.sender.firstName} {message.sender.lastName}</p>
             <p className="text-sm truncate">{message.content}</p>
           </div>,
-          {
-            position: "top-right",
-            autoClose: 5000,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-          }
         );
       }
     });
