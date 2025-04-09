@@ -2,16 +2,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { IUser } from "@/types/user";
+import { IUser, mockUsers } from "@/types/user";
 import { useUser } from "@/context/UserContext";
 import { useNavigate } from "@tanstack/react-router";
 
-const exampleUser: IUser = {
-    id: 'a1b2c3d4-e5f6-7890-gh12-ijk345lmn678',
-    firstName: 'Władysław',
-    lastName: 'Zamoyski',
-    email: 'wladyslaw.zamoyski@example.com',
-};
+const exampleUser: IUser = mockUsers[0];
 
 const LoginForm = ({ setIsLoginForm }: { setIsLoginForm: (isLoginForm: boolean) => void }) => {
     const navigate = useNavigate();

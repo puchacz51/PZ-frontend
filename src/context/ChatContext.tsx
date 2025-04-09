@@ -100,7 +100,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
 
     const messagePayload: ChatMessagePayload = {
       content,
-      sender: user,
+      senderId: user.id,
     };
 
     socket.emit("message", messagePayload);

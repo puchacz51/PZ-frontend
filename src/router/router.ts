@@ -12,7 +12,7 @@ const AuthPage = lazy(() => import('@/pages/auth/AuthPage'));
 const ProjectsPage = lazy(() => import('@/pages/projects/ProjectsPage'));
 const SettingsPage = lazy(() => import('@/pages/settings/SettingsPage'));
 const ChatPage = lazy(() => import('@/pages/chat/ChatPage'));
-
+const ProjectDetailsPage = lazy(() => import('@/pages/projects/ProjectDetailsPage'));
 
 const rootRoute = createRootRoute({
     component: MainLayout,
@@ -48,6 +48,18 @@ const projectsRoute = createRoute({
     },
 });
 
+const projectDetailsRoute = createRoute({
+    getParentRoute: () => rootRoute,
+    path: "/projects/$projectId",
+    component: ProjectDetailsPage,
+    beforeLoad: async (ctx) => {
+        const context = ctx.context as IUserContextType;
+        if (!await context.authenticateUser()) {
+            return redirect({ to: "/auth" });
+        }
+    },
+});
+
 const settingsRoute = createRoute({
     getParentRoute: () => rootRoute,
     path: "/settings",
@@ -72,7 +84,14 @@ const chatRoute = createRoute({
     },
 });
 
-const routeTree = rootRoute.addChildren([indexRoute, authRoute, projectsRoute, settingsRoute, chatRoute]);
+const routeTree = rootRoute.addChildren([
+    indexRoute, 
+    authRoute, 
+    projectsRoute, 
+    projectDetailsRoute, 
+    settingsRoute, 
+    chatRoute
+]);
 
 export const router = createRouter({ 
     routeTree,
