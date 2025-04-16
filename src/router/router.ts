@@ -1,8 +1,10 @@
 import MainLayout from "@/components/common/MainLayout";
+import Loading from "@/components/ui/Loading";
 import { IUserContextType } from "@/context/UserContext";
 import HomePage from "@/pages/HomePage";
 import { createRoute, createRootRoute, createRouter, RouterProvider, redirect } from "@tanstack/react-router";
 import { lazy } from "react";
+import { Context } from "vm";
 
 export { RouterProvider };
 export { Link } from "@tanstack/react-router";
@@ -13,6 +15,13 @@ const ProjectsPage = lazy(() => import('@/pages/projects/ProjectsPage'));
 const SettingsPage = lazy(() => import('@/pages/settings/SettingsPage'));
 const ChatPage = lazy(() => import('@/pages/chat/ChatPage'));
 const ProjectDetailsPage = lazy(() => import('@/pages/projects/ProjectDetailsPage'));
+
+const checkAuth = async (ctx: Context) => {    
+    const context = ctx.context as IUserContextType;
+    if (!await context.authenticateUser()) {
+        return redirect({ to: "/auth" });
+    }
+}
 
 const rootRoute = createRootRoute({
     component: MainLayout,
@@ -28,60 +37,40 @@ const authRoute = createRoute({
     getParentRoute: () => rootRoute,
     path: "/auth",
     component: AuthPage,
-    beforeLoad: async (ctx) => {
-        const context = ctx.context as IUserContextType;
-        if (await context.authenticateUser()) {
-            return redirect({ to: "/" });
-        }
-    },
+    pendingComponent: Loading
 });
 
 const projectsRoute = createRoute({
     getParentRoute: () => rootRoute,
     path: "/projects",
     component: ProjectsPage,
-    beforeLoad: async (ctx) => {
-        const context = ctx.context as IUserContextType;
-        if (!await context.authenticateUser()) {
-            return redirect({ to: "/auth" });
-        }
-    },
+    beforeLoad: checkAuth,
+    pendingComponent: Loading
 });
 
 const projectDetailsRoute = createRoute({
     getParentRoute: () => rootRoute,
     path: "/projects/$projectId",
     component: ProjectDetailsPage,
-    beforeLoad: async (ctx) => {
-        const context = ctx.context as IUserContextType;
-        if (!await context.authenticateUser()) {
-            return redirect({ to: "/auth" });
-        }
-    },
+    beforeLoad: checkAuth,
+    pendingComponent: Loading
+
 });
 
 const settingsRoute = createRoute({
     getParentRoute: () => rootRoute,
     path: "/settings",
     component: SettingsPage,
-    beforeLoad: async (ctx) => {
-        const context = ctx.context as IUserContextType;
-        if (!await context.authenticateUser()) {
-            return redirect({ to: "/auth" });
-        }
-    },
+    beforeLoad: checkAuth,
+    pendingComponent: Loading
 });
 
 const chatRoute = createRoute({
     getParentRoute: () => rootRoute,
     path: "/chat",
     component: ChatPage,
-    beforeLoad: async (ctx) => {
-        const context = ctx.context as IUserContextType;
-        if (!await context.authenticateUser()) {
-            return redirect({ to: "/auth" });
-        }
-    },
+    beforeLoad: checkAuth,
+    pendingComponent: Loading
 });
 
 const routeTree = rootRoute.addChildren([

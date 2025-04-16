@@ -21,7 +21,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ project }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       {/* Main Project Details */}
-      <Card className="col-span-1 md:col-span-2 bg-black/40 border border-white/10">
+      <Card className="col-span-1 md:col-span-2 bg-black/40 border border-white/10 text-white">
         <CardHeader>
           <CardTitle>Informacje o projekcie</CardTitle>
         </CardHeader>
@@ -71,7 +71,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ project }) => {
 
       {/* Project Stats */}
       <div className="space-y-6">
-        <Card className="bg-black/40 border border-white/10">
+        <Card className="bg-black/40 border border-white/10 text-white">
           <CardHeader>
             <CardTitle>Status projektu</CardTitle>
           </CardHeader>
@@ -107,7 +107,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ project }) => {
         </Card>
 
         <Card className="bg-black/40 border border-white/10">
-          <CardHeader className="flex flex-row items-center justify-between">
+          <CardHeader className="flex flex-row items-center justify-between text-white">
             <CardTitle>Zespół projektu</CardTitle>
             <Users className="h-4 w-4 text-white/50" />
           </CardHeader>

@@ -13,6 +13,8 @@ interface ChatContextType {
   error: string | null;
   unreadMessages: number;
   markAllAsRead: () => void;
+  reconnectFailed: boolean;
+  reconnectToChat: () => void;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -23,10 +25,14 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
   const [isConnected, setIsConnected] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [unreadMessages, setUnreadMessages] = useState(0);
+  const [reconnectFailed, setReconnectFailed] = useState(false);
   const { user } = useUser();
 
   const initializeSocket = useCallback(() => {
     if (!user) return null;
+    
+    // Reset reconnection failed state when trying to connect
+    setReconnectFailed(false);
     
     const newSocket = io(SOCKET_URL, {
       reconnectionAttempts: 5,
@@ -40,6 +46,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     newSocket.on("connect", () => {
       setIsConnected(true);
       setError(null);
+      setReconnectFailed(false);
     });
 
     newSocket.on("disconnect", () => {
@@ -49,6 +56,11 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     newSocket.on("connect_error", () => {
       setError("Nie można połączyć się z serwerem czatu.");
       setIsConnected(false);
+    });
+    
+    newSocket.io.on("reconnect_failed", () => {
+      setReconnectFailed(true);
+      setError("Nie udało się połączyć po 5 próbach.");
     });
 
     newSocket.on("message", (message: ChatMessage) => {
@@ -72,6 +84,14 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
 
     return newSocket;
   }, [user]);
+  
+  const reconnectToChat = useCallback(() => {
+    if (socket) {
+      socket.disconnect();
+    }
+    const newSocket = initializeSocket();
+    if (newSocket) setSocket(newSocket);
+  }, [socket, initializeSocket]);
 
   useEffect(() => {
     let newSocket: Socket | null = null;
@@ -93,7 +113,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
 
     const messagePayload: ChatMessagePayload = {
       content,
-      senderId: user.id,
+      sender: user,  // Send the entire user object instead of just the ID
     };
 
     socket.emit("message", messagePayload);
@@ -110,7 +130,9 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       isConnected, 
       error, 
       unreadMessages,
-      markAllAsRead
+      markAllAsRead,
+      reconnectFailed,
+      reconnectToChat
     }}>
       {children}
     </ChatContext.Provider>

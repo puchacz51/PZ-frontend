@@ -41,7 +41,7 @@ const ChatInput = () => {
         />
         <Button 
           onClick={handleSend} 
-          className="hover:invert"
+          className="hover:bg-white hover:text-black"
           disabled={!isConnected || !user || !input.trim()}
         >
           <Send className="h-4 w-4" />

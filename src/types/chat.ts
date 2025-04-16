@@ -10,7 +10,7 @@ export interface ChatMessage {
 
 export interface ChatMessagePayload {
   content: string;
-  senderId: number;
+  sender: IUser;  // Change from senderId to the complete user object
   projectId?: number;
 }
 

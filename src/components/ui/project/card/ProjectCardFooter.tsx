@@ -13,12 +13,12 @@ const ProjectCardFooter: React.FC<ProjectCardFooterProps> = ({ project }) => {
     <CardFooter className="gap-2 border-t border-white/5 pt-3 relative">
       <Button 
         variant="outline" 
-        className="flex-1 bg-white/5 text-white border-white/10 hover:bg-white/10 hover:text-white group" 
+        className="flex-1 bg-white/5 text-white border-white/10 hover:bg-white/90 hover:text-black group" 
         asChild
       >
         <Link to={`/projects/${project.id}`}>
           Szczegóły
-          <ArrowRight className="h-4 w-4 ml-1 opacity-70 group-hover:translate-x-1 transition-transform" />
+          <ArrowRight className="h-4 w-4 ml-1 group-hover:translate-x-1 transition-transform" />
         </Link>
       </Button>      
     </CardFooter>

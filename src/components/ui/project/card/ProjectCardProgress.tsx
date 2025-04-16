@@ -42,17 +42,6 @@ const ProjectCardProgress: React.FC<ProjectCardProgressProps> = ({ project }) =>
         delay: 0.3,
       });
     }
-    
-    // Animate days counter for overdue projects
-    if (isOverdue && daysCounterRef.current && 
-        project.status !== "Completed" && project.status !== "Canceled") {
-      gsap.from(daysCounterRef.current, {
-        opacity: 0,
-        y: 10,
-        duration: 0.5,
-        delay: 1.2,
-      });
-    }
   }, [progress, isOverdue, project.status]);
 
   return (
