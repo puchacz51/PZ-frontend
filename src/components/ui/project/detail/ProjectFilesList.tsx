@@ -44,7 +44,7 @@ const ProjectFilesList: React.FC<ProjectFilesListProps> = ({
               size="icon" 
               variant="ghost" 
               onClick={() => onDownloadFile(file)}
-              className="h-8 w-8 text-white/70 hover:text-white hover:bg-white/10"
+              className="h-8 w-8 text-white/70 hover:text-black hover:bg-white"
             >
               <Download className="h-4 w-4" />
             </Button>
@@ -52,7 +52,7 @@ const ProjectFilesList: React.FC<ProjectFilesListProps> = ({
               size="icon" 
               variant="ghost" 
               onClick={() => onDeleteFile(file.id)}
-              className="h-8 w-8 text-white/70 hover:text-white hover:bg-white/10"
+              className="h-8 w-8 text-white/70 hover:text-white hover:bg-red-500/90"
             >
               <Trash2 className="h-4 w-4" />
             </Button>

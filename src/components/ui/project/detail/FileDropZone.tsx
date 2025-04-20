@@ -66,7 +66,7 @@ const FileDropZone: React.FC<FileDropZoneProps> = ({
           <p className="font-medium">Przeciągnij i upuść pliki</p>
           <p className="text-sm text-white/70">lub</p>
         </div>
-        <label className="cursor-pointer bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-md transition-colors">
+        <label className="cursor-pointer bg-white/10 hover:bg-white hover:text-black text-white px-4 py-2 rounded-md transition-colors">
           Wybierz pliki
           <input 
             type="file" 

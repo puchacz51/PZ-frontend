@@ -22,7 +22,7 @@ const ProjectFilterBar: React.FC<ProjectFilterBarProps> = ({
   return (
     <Card className="p-4 bg-black/40 border border-white/10">
       <div className="flex flex-col sm:flex-row gap-4">
-        <div className="flex-1 space-y-1">
+        <div className="space-y-1">
           <label className="text-xs text-white/60">Status projektu</label>
           <Select value={statusFilter} onValueChange={(value) => onStatusChange(value as ProjectFilterStatus)}>
             <SelectTrigger className="bg-white/10 border-white/20 text-white">

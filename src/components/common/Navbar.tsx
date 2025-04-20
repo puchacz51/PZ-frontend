@@ -14,7 +14,7 @@ const Navbar = () => {
     const { unreadMessages, markAllAsRead } = useChat();
     const location = useLocation();
     const [menuOpen, setMenuOpen] = useState(false);
-
+    
     const handleChatClick = () => {
         markAllAsRead();
     };
@@ -29,16 +29,18 @@ const Navbar = () => {
 
                 <div className="flex items-center gap-3">
                     {user && (
-                        <Link to="/chat" onClick={handleChatClick} className="relative">
-                            <Button variant="ghost" className="text-white hover:bg-white color-black  rounded-10 w-9 h-9 p-0 cursor-pointer">
-                                <MessageCircle className="h-5 w-5" />
-                            </Button>
-                            {unreadMessages > 0 && (
-                                <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-white text-xs text-black font-bold border-2 border-black">
-                                    {unreadMessages > 9 ? "9+" : unreadMessages}
-                                </span>
-                            )}
-                        </Link>
+                        <>
+                            <Link to="/chat" onClick={handleChatClick} className="relative">
+                                <Button variant="ghost" className="text-white hover:bg-white color-black rounded-10 w-9 h-9 p-0 cursor-pointer">
+                                    <MessageCircle className="h-5 w-5" />
+                                </Button>
+                                {unreadMessages > 0 && (
+                                    <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-white text-xs text-black font-bold border-2 border-black">
+                                        {unreadMessages > 9 ? '9+' : unreadMessages}
+                                    </span>
+                                )}
+                            </Link>
+                        </>
                     )}
 
                     {user ? (

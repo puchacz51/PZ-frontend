@@ -9,7 +9,7 @@ interface ProjectFilesManagerProps {
 }
 
 const ProjectFilesManager: React.FC<ProjectFilesManagerProps> = ({ 
-  projectId, 
+  // projectId, 
   initialFiles = [] 
 }) => {
   const [files, setFiles] = useState<IFile[]>(initialFiles.length > 0 ? initialFiles : mockFiles);

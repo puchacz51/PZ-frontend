@@ -112,7 +112,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task,
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel className="bg-white/10 text-white border-white/10 hover:bg-white/20">Anuluj</AlertDialogCancel>
+                <AlertDialogCancel className="bg-white/10 text-white border-white/10 hover:bg-white">Anuluj</AlertDialogCancel>
                 <AlertDialogAction 
                   className="bg-red-500/30 text-white border-red-500/30 hover:bg-red-500/50"
                   onClick={handleDelete}

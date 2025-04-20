@@ -134,3 +134,20 @@
 .animate-gradient-xy {
     animation: gradient-xy 15s ease infinite;
 }
+
+body {
+    scrollbar-gutter: stable;
+}
+
+/* 
+  Alternatywa dla starszych przeglądarek:
+  body {
+    overflow-y: scroll !important;
+    margin-right: 0 !important;
+  }
+*/
+
+[data-scroll-locked][data-scroll-locked] {
+    overflow-y: scroll !important;
+    margin-right: 0 !important;
+}

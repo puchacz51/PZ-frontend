@@ -108,7 +108,7 @@ const ProjectDetailsPage = () => {
                 </div>
 
                 <div className="flex items-center gap-2 self-end md:self-auto">
-                    <Button variant="outline" size="sm" className="bg-white/10 border-white/20 text-white hover:bg-white/20" onClick={() => setIsEditModalOpen(true)}>
+                    <Button variant="outline" size="sm" className="bg-white/10 border-white/20 text-white hover:bg-white hover:text-black" onClick={() => setIsEditModalOpen(true)}>
                         <Edit className="h-4 w-4 mr-2" />
                         Edytuj
                     </Button>
@@ -121,17 +121,17 @@ const ProjectDetailsPage = () => {
 
             {/* Tabs */}
             <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-6">
-                <TabsList className="bg-black border border-white/10 mb-6 w-full md:w-auto">
-                    <TabsTrigger value="details" className="data-[state=active]:bg-white/10">
+                <TabsList className="bg-black border border-white/10 mb-6 w-full md:w-auto gap-2">
+                    <TabsTrigger value="details" className="data-[state=active]:bg-white hover:bg-white/90 hover:text-black data-[state=active]:text-black ">
                         Szczegóły projektu
                     </TabsTrigger>
-                    <TabsTrigger value="tasks" className="data-[state=active]:bg-white/10">
+                    <TabsTrigger value="tasks" className="data-[state=active]:bg-white hover:bg-white/90 hover:text-black data-[state=active]:text-black ">
                         Zadania
                     </TabsTrigger>
-                    <TabsTrigger value="team" className="data-[state=active]:bg-white/10">
+                    <TabsTrigger value="team" className="data-[state=active]:bg-white hover:bg-white/90 hover:text-black data-[state=active]:text-black ">
                         Zespół
                     </TabsTrigger>
-                    <TabsTrigger value="files" className="data-[state=active]:bg-white/10">
+                    <TabsTrigger value="files" className="data-[state=active]:bg-white hover:bg-white/90 hover:text-black data-[state=active]:text-black ">
                         <NewBadge />
                         Pliki
                     </TabsTrigger>

@@ -4,8 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite && node /src/test/chatTestServer.js",
     "build": "tsc -b && vite build",
+    "start": "node dist/index.js",
     "lint": "eslint .",
     "preview": "vite preview"
   },
@@ -27,6 +28,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
+    "express": "^5.1.0",
     "gsap": "^3.12.7",
     "lucide-react": "^0.483.0",
     "postcss": "^8.5.3",
@@ -37,10 +39,12 @@
     "react-router-dom": "^7.3.0",
     "react-toastify": "^10.0.4",
     "shadcn-ui": "^0.9.5",
+    "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1",
     "tailwind-merge": "^3.0.2",
     "tailwindcss": "^4.0.14",
     "tw-animate-css": "^1.2.4",
+    "uuid": "^11.1.0",
     "zustand": "^5.0.3"
   },
   "devDependencies": {

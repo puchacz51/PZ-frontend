@@ -15,10 +15,10 @@ function App() {
     return (
         <UserProvider>
             <ChatProvider>
-                <Suspense fallback={<Loading />}>
-                    <InnerApp />
-                </Suspense>
-                <ChatNotifications />
+                    <Suspense fallback={<Loading />}>
+                        <InnerApp />
+                    </Suspense>
+                    <ChatNotifications />
             </ChatProvider>
         </UserProvider>
     );

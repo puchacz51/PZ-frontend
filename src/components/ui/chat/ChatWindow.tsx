@@ -52,7 +52,7 @@ const ChatWindow = () => {
               <CardFooter className="flex justify-center">
                 <Button 
                   onClick={reconnectToChat} 
-                  className="bg-white/10 hover:bg-white/20 text-white"
+                  className="bg-white/10 hover:bg-white text-white hover:text-black"
                 >
                   <RefreshCw className="h-4 w-4 mr-2" />
                   Odśwież połączenie

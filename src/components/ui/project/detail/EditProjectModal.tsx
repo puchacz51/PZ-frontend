@@ -157,7 +157,7 @@ const EditProjectModal: React.FC<EditProjectModalProps> = ({
               type="button" 
               variant="outline" 
               onClick={onClose}
-              className="bg-white/10 text-white border-white/20 hover:bg-white/20"
+              className="bg-white/10 text-white border-white/20 hover:bg-white"
             >
               Anuluj
             </Button>

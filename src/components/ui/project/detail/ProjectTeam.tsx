@@ -136,7 +136,7 @@ const ProjectTeam: React.FC<ProjectTeamProps> = ({ projectId }) => {
                 : "Ten projekt nie ma jeszcze przypisanych członków zespołu."}
             </p>
             <Button 
-              className="mt-4 bg-white/10 text-white hover:bg-white/20 border border-white/20"
+              className="mt-4 bg-white/10 text-white hover:bg-white border border-white/20"
               // onClick={() => setIsAddMemberModalOpen(true)}
             >
               <PlusCircle className="mr-2 h-4 w-4" />
