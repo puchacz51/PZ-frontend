@@ -5,8 +5,6 @@ export interface IUser {
     role: string;
     firstName: string;
     lastName: string;
-    avatarUrl?: string | null;
-    createdAt?: string;
 }
 
 export interface IUserSummary {
