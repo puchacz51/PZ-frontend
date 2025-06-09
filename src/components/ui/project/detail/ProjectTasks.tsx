@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PlusCircle, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { mockTasks, ITask } from "@/types/task";
+import { taskService } from "@/api/taskService";
+import { ITask } from "@/types/task";
 import TaskCard from "./TaskCard";
-// import AddTaskModal from "./AddTaskModal";
+import AddTaskModal from "./modals/AddTaskModal";
 
 interface ProjectTasksProps {
   projectId: number;
@@ -13,19 +14,38 @@ interface ProjectTasksProps {
 
 const ProjectTasks: React.FC<ProjectTasksProps> = ({ projectId }) => {
   const [searchQuery, setSearchQuery] = useState("");
-//   const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
-  const [tasks, setTasks] = useState<ITask[]>(() => 
-    mockTasks.filter(task => task.projectId === projectId)
-  );
+  const [tasks, setTasks] = useState<ITask[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
+
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const data = await taskService.getTasksByProject(projectId);
+        console.log('📝 Tasks fetched for project:', projectId, data);
+        setTasks(data);
+      } catch (err: any) {
+        console.error('📝 Failed to fetch tasks:', err);
+        setError(err.response?.data?.message || 'Nie udało się pobrać zadań');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTasks();
+  }, [projectId]);
 
   const filteredTasks = tasks.filter(task => 
     task.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     task.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-//   const handleAddTask = (newTask: ITask) => {
-//     setTasks(prevTasks => [...prevTasks, newTask]);
-//   };
+  const handleAddTask = (newTask: ITask) => {
+    setTasks(prevTasks => [...prevTasks, newTask]);
+  };
 
   const handleUpdateTask = (updatedTask: ITask) => {
     setTasks(prevTasks => 
@@ -33,9 +53,37 @@ const ProjectTasks: React.FC<ProjectTasksProps> = ({ projectId }) => {
     );
   };
 
-  const handleDeleteTask = (taskId: number) => {
-    setTasks(prevTasks => prevTasks.filter(task => task.id !== taskId));
+  const handleDeleteTask = async (taskId: number) => {
+    try {
+      await taskService.deleteTask(taskId);
+      setTasks(prevTasks => prevTasks.filter(task => task.id !== taskId));
+    } catch (err: any) {
+      console.error('🗑️ Failed to delete task:', err);
+      setError(err.response?.data?.message || 'Nie udało się usunąć zadania');
+    }
   };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center py-12">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-white"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-red-400 mb-4">{error}</p>
+        <Button 
+          onClick={() => window.location.reload()} 
+          className="bg-white/10 text-white hover:bg-white/20 border border-white/20"
+        >
+          🔄 Spróbuj ponownie
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -52,9 +100,7 @@ const ProjectTasks: React.FC<ProjectTasksProps> = ({ projectId }) => {
         
         <Button 
           className="bg-white/10 text-white hover:bg-white/20 border border-white/20 group w-full sm:w-auto"
-          onClick={() => {  
-            // setIsAddTaskModalOpen(true)
-          }}
+          onClick={() => setIsAddTaskModalOpen(true)}
         >
           <PlusCircle className="mr-2 h-4 w-4 group-hover:text-white" />
           Nowe zadanie
@@ -86,9 +132,7 @@ const ProjectTasks: React.FC<ProjectTasksProps> = ({ projectId }) => {
             </p>
             <Button 
               className="mt-4 bg-white/10 text-white hover:bg-white border border-white/20"
-              onClick={() => {
-                // setIsAddTaskModalOpen(true)
-              }}
+              onClick={() => setIsAddTaskModalOpen(true)}
             >
               <PlusCircle className="mr-2 h-4 w-4" />
               Dodaj pierwsze zadanie
@@ -97,12 +141,12 @@ const ProjectTasks: React.FC<ProjectTasksProps> = ({ projectId }) => {
         </Card>
       )}
 
-      {/* <AddTaskModal 
+      <AddTaskModal 
         isOpen={isAddTaskModalOpen} 
         onClose={() => setIsAddTaskModalOpen(false)} 
         onAddTask={handleAddTask}
         projectId={projectId}
-      /> */}
+      />
     </div>
   );
 };
