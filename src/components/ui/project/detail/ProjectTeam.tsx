@@ -21,7 +21,7 @@ const ProjectTeam: React.FC<ProjectTeamProps> = ({ projectId }) => {
     mockProjectUsers.filter(pu => pu.projectId === projectId)
   );
 
-  // Map project users to full user objects
+  // Map project users to full user objects - ensure proper string rendering
   const teamWithUserData = projectTeam.map(teamMember => {
     const user = mockUsers.find(u => u.id === teamMember.userId);
     return {

@@ -6,6 +6,15 @@ export type ProjectStatus =
     | "Canceled"
     | "Under Review";
 
+// Backend status format
+export type BackendProjectStatus = 
+    | "NOT_STARTED"
+    | "IN_PROGRESS" 
+    | "COMPLETED"
+    | "ON_HOLD"
+    | "CANCELED"
+    | "UNDER_REVIEW";
+
 export interface IProjectCreateRequest {
     name: string;
     description: string;
@@ -14,6 +23,24 @@ export interface IProjectCreateRequest {
     status: ProjectStatus;
 }
 
+// Backend response format
+export interface IBackendProject {
+    id: number;
+    name: string;
+    description: string;
+    startDate: string;
+    endDate: string;
+    status: BackendProjectStatus;
+    createdBy: {
+        id: number;
+        firstName: string;
+        lastName: string;
+        email: string;
+    };
+    createdAt: string;
+}
+
+// Frontend format (transformed)
 export interface IProject {
     id: number;
     name: string;
@@ -29,89 +56,41 @@ export interface IDeleteResponse {
     message: string;
 }
 
-export const mockProjects: IProject[] = [
-    {
-        id: 1,
-        name: "Project A",
-        description: "Description of project A - a website for client X",
-        startDate: "2025-04-01",
-        endDate: "2025-06-01",
-        status: "In Progress",
-        createdBy: "john_doe",
-        createdAt: "2025-04-01"
-    },
-    {
-        id: 2,
-        name: "Project B",
-        description: "Mobile application for internal use",
-        startDate: "2025-02-15",
-        endDate: "2025-08-30",
-        status: "In Progress",
-        createdBy: "jane_smith",
-        createdAt: "2025-02-10"
-    },
-    {
-        id: 3,
-        name: "Project C",
-        description: "E-commerce platform revamp",
-        startDate: "2025-03-25",
-        endDate: "2025-03-30",
-        status: "Under Review",
-        createdBy: "john_doe",
-        createdAt: "2025-03-25"
-    },
-    {
-        id: 4,
-        name: "Project D - Already Completed",
-        description: "Legacy code cleanup",
-        startDate: "2025-01-01",
-        endDate: "2025-03-01",
-        status: "Completed",
-        createdBy: "jane_smith",
-        createdAt: "2025-01-01"
-    },
-    {
-        id: 5,
-        name: "Project E - Starts Today",
-        description: "Design system overhaul",
-        startDate: "2025-04-09",
-        endDate: "2025-07-09",
-        status: "Not Started",
-        createdBy: "robert_johnson",
-        createdAt: "2025-04-09"
-    },
-    {
-        id: 6,
-        name: "Project F - Future Start",
-        description: "AI chatbot integration",
-        startDate: "2025-05-20",
-        endDate: "2025-09-01",
-        status: "Not Started",
-        createdBy: "john_doe",
-        createdAt: "2025-04-05"
-    },
-    {
-        id: 7,
-        name: "Project G - Very Old",
-        description: "Old R&D project for deprecated tech",
-        startDate: "2023-01-01",
-        endDate: "2023-12-31",
-        status: "Canceled",
-        createdBy: "robert_johnson",
-        createdAt: "2023-01-01"
-    },
-    {
-        id: 8,
-        name: "Project H - Just Created",
-        description: "Newly initiated internal task tracking",
-        startDate: "2025-04-10",
-        endDate: "2025-06-30",
-        status: "On Hold",
-        createdBy: "jane_smith",
-        createdAt: "2025-04-09"
+// 🔄 Status transformation helpers
+export const transformStatusFromBackend = (backendStatus: BackendProjectStatus): ProjectStatus => {
+    switch (backendStatus) {
+        case "NOT_STARTED": return "Not Started";
+        case "IN_PROGRESS": return "In Progress";
+        case "COMPLETED": return "Completed";
+        case "ON_HOLD": return "On Hold";
+        case "CANCELED": return "Canceled";
+        case "UNDER_REVIEW": return "Under Review";
+        default: return "Not Started";
     }
-];
+};
 
-export const mockDeleteResponse: IDeleteResponse = {
-    message: "Project successfully deleted"
+export const transformStatusToBackend = (frontendStatus: ProjectStatus): BackendProjectStatus => {
+    switch (frontendStatus) {
+        case "Not Started": return "NOT_STARTED";
+        case "In Progress": return "IN_PROGRESS";
+        case "Completed": return "COMPLETED";
+        case "On Hold": return "ON_HOLD";
+        case "Canceled": return "CANCELED";
+        case "Under Review": return "UNDER_REVIEW";
+        default: return "NOT_STARTED";
+    }
+};
+
+// 🔄 Project transformation helper
+export const transformProjectFromBackend = (backendProject: IBackendProject): IProject => {
+    return {
+        id: backendProject.id,
+        name: backendProject.name,
+        description: backendProject.description,
+        startDate: backendProject.startDate,
+        endDate: backendProject.endDate,
+        status: transformStatusFromBackend(backendProject.status),
+        createdBy: `${backendProject.createdBy.firstName} ${backendProject.createdBy.lastName}`,
+        createdAt: backendProject.createdAt
+    };
 };

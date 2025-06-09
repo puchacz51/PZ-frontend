@@ -1,32 +1,30 @@
 import { useState } from "react";
-import { projectService } from "@/api/projectService";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { IProject, ProjectStatus } from "@/types/project";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ProjectStatus, IProject } from "@/types/project";
+import { projectService } from "@/api/projectService";
 
-interface EditProjectModalProps {
+interface CreateProjectModalProps {
   isOpen: boolean;
   onClose: () => void;
-  project: IProject;
-  onUpdate: (updatedProject: IProject) => void;
+  onProjectCreated: (project: IProject) => void;
 }
 
-const EditProjectModal: React.FC<EditProjectModalProps> = ({ 
+const CreateProjectModal: React.FC<CreateProjectModalProps> = ({ 
   isOpen, 
   onClose, 
-  project,
-  onUpdate
+  onProjectCreated
 }) => {
   const [formData, setFormData] = useState({
-    name: project.name,
-    description: project.description,
-    startDate: project.startDate.slice(0, 10),
-    endDate: project.endDate.slice(0, 10),
-    status: project.status
+    name: '',
+    description: '',
+    startDate: '',
+    endDate: '',
+    status: 'Not Started' as ProjectStatus
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -47,19 +45,21 @@ const EditProjectModal: React.FC<EditProjectModalProps> = ({
     setError(null);
     
     try {
-      const updatedProject = await projectService.updateProject(project.id, {
-        name: formData.name,
-        description: formData.description,
-        startDate: formData.startDate,
-        endDate: formData.endDate,
-        status: formData.status
-      });
-      
-      onUpdate(updatedProject);
+      const newProject = await projectService.createProject(formData);
+      onProjectCreated(newProject);
       onClose();
+      
+      // Reset form
+      setFormData({
+        name: '',
+        description: '',
+        startDate: '',
+        endDate: '',
+        status: 'Not Started'
+      });
     } catch (err: any) {
-      console.error('✏️ Failed to update project:', err);
-      setError(err.response?.data?.message || 'Nie udało się zaktualizować projektu');
+      console.error('📁 Failed to create project:', err);
+      setError(err.response?.data?.message || 'Nie udało się utworzyć projektu');
     } finally {
       setIsSubmitting(false);
     }
@@ -67,7 +67,7 @@ const EditProjectModal: React.FC<EditProjectModalProps> = ({
 
   const projectStatusOptions: ProjectStatus[] = [
     "Not Started",
-    "In Progress",
+    "In Progress", 
     "Completed",
     "On Hold",
     "Canceled",
@@ -90,7 +90,7 @@ const EditProjectModal: React.FC<EditProjectModalProps> = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
-          <DialogTitle>Edytuj projekt</DialogTitle>
+          <DialogTitle>📁 Utwórz nowy projekt</DialogTitle>
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -185,7 +185,7 @@ const EditProjectModal: React.FC<EditProjectModalProps> = ({
               disabled={isSubmitting}
               className="bg-white text-black hover:bg-white/80"
             >
-              {isSubmitting ? '⏳ Zapisywanie...' : 'Zapisz zmiany'}
+              {isSubmitting ? '⏳ Tworzenie...' : '📁 Utwórz projekt'}
             </Button>
           </div>
         </form>
@@ -194,4 +194,4 @@ const EditProjectModal: React.FC<EditProjectModalProps> = ({
   );
 };
 
-export default EditProjectModal;
+export default CreateProjectModal;

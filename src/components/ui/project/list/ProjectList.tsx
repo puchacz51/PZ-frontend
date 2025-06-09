@@ -1,26 +1,50 @@
-import { useState, useMemo } from "react";
-import { mockProjects } from "@/types/project";
+import { useState, useMemo, useEffect } from "react";
+import { projectService } from "@/api/projectService";
+import { IProject } from "@/types/project";
 import ProjectCard from "../card/ProjectCard";
 import { Button } from "@/components/ui/button";
 import { PlusCircle, Search, Filter, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import ProjectFilterBar from "./ProjectFilterBar";
 import NewBadge from "../../NewBadge";
+import CreateProjectModal from "../modals/CreateProjectModal";
 
 // Define types for sorting and filtering
 export type ProjectSortOption = "newest" | "oldest" | "nameAZ" | "nameZA" | "endDateSoon" | "endDateLater";
 export type ProjectFilterStatus = "all" | "notStarted" | "inProgress" | "completed" | "onHold" | "canceled" | "underReview";
 
 const ProjectList = () => {
+    const [projects, setProjects] = useState<IProject[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState("");
     const [showFilters, setShowFilters] = useState(false);
     const [sortBy, setSortBy] = useState<ProjectSortOption>("newest");
     const [statusFilter, setStatusFilter] = useState<ProjectFilterStatus>("all");
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
+    useEffect(() => {
+        const fetchProjects = async () => {
+            try {
+                setLoading(true);
+                setError(null);
+                const data = await projectService.getAllProjects();
+                setProjects(data);
+            } catch (err: any) {
+                console.error('📋 Failed to fetch projects:', err);
+                setError(err.response?.data?.message || 'Nie udało się pobrać projektów');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchProjects();
+    }, []);
 
     // Apply filtering
     const filteredProjects = useMemo(() => {
         // First filter by search query
-        let filtered = mockProjects.filter((project) => {
+        let filtered = projects.filter((project) => {
             return project.name.toLowerCase().includes(searchQuery.toLowerCase()) || project.description.toLowerCase().includes(searchQuery.toLowerCase());
         });
 
@@ -65,7 +89,7 @@ const ProjectList = () => {
                     return 0;
             }
         });
-    }, [searchQuery, sortBy, statusFilter, mockProjects]);
+    }, [searchQuery, sortBy, statusFilter, projects]);
 
     const handleClearFilters = () => {
         setSearchQuery("");
@@ -73,7 +97,33 @@ const ProjectList = () => {
         setStatusFilter("all");
     };
 
+    const handleProjectCreated = (newProject: IProject) => {
+        setProjects(prevProjects => [newProject, ...prevProjects]);
+    };
+
     const activeFiltersCount = (statusFilter !== "all" ? 1 : 0) + (sortBy !== "newest" ? 1 : 0);
+
+    if (loading) {
+        return (
+            <div className="flex justify-center py-12">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white"></div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="text-center py-12">
+                <p className="text-red-400 mb-4">{error}</p>
+                <Button 
+                    onClick={() => window.location.reload()} 
+                    className="bg-white/10 text-white hover:bg-white/20 border border-white/20"
+                >
+                    🔄 Spróbuj ponownie
+                </Button>
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-6">
@@ -92,7 +142,10 @@ const ProjectList = () => {
                             {activeFiltersCount > 0 && <span className="ml-2 bg-white/20 text-white text-xs rounded-full w-5 h-5 inline-flex items-center justify-center">{activeFiltersCount}</span>}
                         </Button>
 
-                        <Button className="bg-white/10 text-white hover:bg-white/20 border border-white/20 group flex-1 sm:flex-none">
+                        <Button 
+                            className="bg-white/10 text-white hover:bg-white/20 border border-white/20 group flex-1 sm:flex-none"
+                            onClick={() => setIsCreateModalOpen(true)}
+                        >
                             <PlusCircle className="mr-2 h-4 w-4 group-hover:text-white" />
                             Nowy projekt
                         </Button>
@@ -160,6 +213,11 @@ const ProjectList = () => {
                     )}
                 </div>
             )}
+            <CreateProjectModal 
+                isOpen={isCreateModalOpen}
+                onClose={() => setIsCreateModalOpen(false)}
+                onProjectCreated={handleProjectCreated}
+            />
         </div>
     );
 };

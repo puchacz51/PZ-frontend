@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "@tanstack/react-router";
+import { projectService } from "@/api/projectService";
+import { IProject } from "@/types/project";
 import ProjectDetails from "@/components/ui/project/detail/ProjectDetails";
 import ProjectTasks from "@/components/ui/project/detail/ProjectTasks";
 import ProjectTeam from "@/components/ui/project/detail/ProjectTeam";
-import { IProject, mockProjects } from "@/types/project";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Edit, Trash2 } from "lucide-react";
 import ProjectStatusBadge from "@/components/ui/project/common/ProjectStatusBadge";
@@ -22,25 +23,24 @@ const ProjectDetailsPage = () => {
     const navigate = useNavigate();
     const [project, setProject] = useState<IProject | null>(null);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [activeTab, setActiveTab] = useState("details");
 
     useEffect(() => {
-        // Simulate API call
         const fetchProject = async () => {
             setLoading(true);
+            setError(null);
             try {
-                // In a real app, this would be an API call
-                const foundProject = mockProjects.find((p) => p.id === Number(projectId));
-
-                if (foundProject) {
-                    setProject(foundProject);
-                } else {
-                    // Project not found
+                const foundProject = await projectService.getProjectById(Number(projectId));
+                setProject(foundProject);
+            } catch (err: any) {
+                console.error("🔍 Failed to fetch project:", err);
+                if (err.response?.status === 404) {
                     navigate({ to: "/projects" });
+                } else {
+                    setError(err.response?.data?.message || 'Nie udało się pobrać projektu');
                 }
-            } catch (error) {
-                console.error("Failed to fetch project:", error);
             } finally {
                 setLoading(false);
             }
@@ -54,13 +54,13 @@ const ProjectDetailsPage = () => {
     };
 
     const handleDeleteProject = async () => {
-        // Simulate API call
         try {
-            // In a real app, this would be an API call
-            console.log(`Deleting project with ID: ${projectId}`);
+            await projectService.deleteProject(Number(projectId));
+            console.log(`🗑️ Deleting project with ID: ${projectId}`);
             navigate({ to: "/projects" });
-        } catch (error) {
-            console.error("Failed to delete project:", error);
+        } catch (err: any) {
+            console.error("❌ Failed to delete project:", err);
+            setError(err.response?.data?.message || 'Nie udało się usunąć projektu');
         }
     };
 
@@ -70,6 +70,21 @@ const ProjectDetailsPage = () => {
                 <div className="flex justify-center">
                     <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white"></div>
                 </div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="container mx-auto py-8 px-4">
+                <Card className="bg-black/40 border border-red-500/50 p-8 text-center">
+                    <h2 className="text-2xl font-semibold text-white">❌ Błąd</h2>
+                    <p className="text-red-400 mt-2">{error}</p>
+                    <Button className="mt-4" onClick={() => navigate({ to: "/projects" })}>
+                        <ArrowLeft className="mr-2 h-4 w-4" />
+                        Powrót do listy projektów
+                    </Button>
+                </Card>
             </div>
         );
     }

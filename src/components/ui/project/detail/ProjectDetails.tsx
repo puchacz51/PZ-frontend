@@ -14,7 +14,7 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ project }) => {
   const startDate = parseISO(project.startDate);
   const endDate = parseISO(project.endDate);
   
-  // Find creator
+  // Find creator - fix object rendering issue
   const creator = mockUsers.find(user => user.login === project.createdBy);
   const creatorName = creator ? `${creator.firstName} ${creator.lastName}` : project.createdBy;
 

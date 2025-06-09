@@ -1,4 +1,4 @@
-// import { useState } from "react";
+// import { useState } from "react};
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Edit2, Trash2 } from "lucide-react";
@@ -21,7 +21,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task,
   onDelete }) => {
 //   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   
-  // Find assigned user
+  // Find assigned user - ensure we render string, not object
   const assignedUser = mockUsers.find(user => user.login === task.assignedTo);
   const assignedName = assignedUser 
     ? `${assignedUser.firstName} ${assignedUser.lastName}` 
