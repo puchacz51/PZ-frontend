@@ -5,16 +5,33 @@ import { Input } from "@/components/ui/input";
 import { LogOut, Upload, User, Settings } from "lucide-react";
 import { useState } from "react";
 import NewBadge from "@/components/ui/NewBadge";
+import { userService } from "@/api/userService";
 
 const SettingsPage = () => {
-    const { user, logout } = useUser();
+    const { user, logout, updateUserProfile } = useUser();
     const [avatarFile, setAvatarFile] = useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+    const [isUploading, setIsUploading] = useState(false);
+    const [uploadError, setUploadError] = useState<string | null>(null);
 
     const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
             const file = e.target.files[0];
+            
+            // Walidacja rozmiaru pliku (max 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                setUploadError("Plik jest za duży. Maksymalny rozmiar to 5MB.");
+                return;
+            }
+
+            // Walidacja typu pliku
+            if (!file.type.startsWith('image/')) {
+                setUploadError("Nieprawidłowy typ pliku. Wybierz obraz.");
+                return;
+            }
+
             setAvatarFile(file);
+            setUploadError(null);
 
             const objectUrl = URL.createObjectURL(file);
             setPreviewUrl(objectUrl);
@@ -23,9 +40,46 @@ const SettingsPage = () => {
         }
     };
 
-    const handleAvatarSave = () => {
-        console.log("Avatar file to upload:", avatarFile);
-        alert("Funkcja zmiany avatara będzie dostępna wkrótce!");
+    const handleAvatarSave = async () => {
+        if (!avatarFile) return;
+
+        setIsUploading(true);
+        setUploadError(null);
+
+        try {
+            await userService.uploadAvatar(avatarFile);
+            await updateUserProfile();
+            
+            // 🎉 Czyszczenie stanu po udanym uploadu
+            setAvatarFile(null);
+            setPreviewUrl(null);
+            
+            console.log("✅ Avatar uploaded successfully");
+        } catch (error: any) {
+            console.error("❌ Avatar upload failed:", error);
+            setUploadError(error.response?.data?.message || 'Nie udało się przesłać avatara');
+        } finally {
+            setIsUploading(false);
+        }
+    };
+
+    const handleAvatarDelete = async () => {
+        if (!user?.avatarUrl) return;
+
+        setIsUploading(true);
+        setUploadError(null);
+
+        try {
+            await userService.deleteAvatar();
+            await updateUserProfile();
+            
+            console.log("🗑️ Avatar deleted successfully");
+        } catch (error: any) {
+            console.error("❌ Avatar delete failed:", error);
+            setUploadError(error.response?.data?.message || 'Nie udało się usunąć avatara');
+        } finally {
+            setIsUploading(false);
+        }
     };
 
     return (
@@ -53,7 +107,14 @@ const SettingsPage = () => {
                         <label htmlFor="avatar-upload" className="absolute bottom-0 right-0 h-10 w-10 bg-white/90 rounded-full flex items-center justify-center cursor-pointer hover:bg-white transition-all shadow-md">
                             <Upload className="h-5 w-5 text-black" />
                         </label>
-                        <Input id="avatar-upload" type="file" accept="image/*" className="hidden" onChange={handleAvatarChange} />
+                        <Input 
+                            id="avatar-upload" 
+                            type="file" 
+                            accept="image/*" 
+                            className="hidden" 
+                            onChange={handleAvatarChange}
+                            disabled={isUploading}
+                        />
                     </div>
 
                     <div className="text-center md:text-left md:flex-1">
@@ -69,19 +130,42 @@ const SettingsPage = () => {
                 </div>
 
                 <div className="p-6 space-y-8">
-                    {previewUrl && (
+                    {/* Upload/Delete Avatar Section */}
+                    {(previewUrl || user?.avatarUrl) && (
                         <div className="bg-white/5 p-4 rounded-lg border border-white/10 mb-6">
                             <div className="flex items-center justify-between">
                                 <div>
                                     <h3 className="text-white font-medium flex items-center">
                                         <Settings className="h-4 w-4 mr-2 text-white/70" />
-                                        Nowy avatar
+                                        {previewUrl ? "Nowy avatar" : "Zarządzaj avatarem"}
                                     </h3>
-                                    <p className="text-white/60 text-sm mt-1">{avatarFile?.name}</p>
+                                    {previewUrl && (
+                                        <p className="text-white/60 text-sm mt-1">{avatarFile?.name}</p>
+                                    )}
+                                    {uploadError && (
+                                        <p className="text-red-400 text-sm mt-1">{uploadError}</p>
+                                    )}
                                 </div>
-                                <Button onClick={handleAvatarSave} className="bg-white text-black hover:bg-white/80">
-                                    Zapisz avatar
-                                </Button>
+                                <div className="flex gap-2">
+                                    {previewUrl && (
+                                        <Button 
+                                            onClick={handleAvatarSave} 
+                                            disabled={isUploading}
+                                            className="bg-white text-black hover:bg-white/80"
+                                        >
+                                            {isUploading ? "⏳ Zapisywanie..." : "💾 Zapisz avatar"}
+                                        </Button>
+                                    )}
+                                    {user?.avatarUrl && !previewUrl && (
+                                        <Button 
+                                            onClick={handleAvatarDelete}
+                                            disabled={isUploading}
+                                            className="bg-red-500/20 border border-red-500/30 text-red-400 hover:bg-red-500/30"
+                                        >
+                                            {isUploading ? "⏳ Usuwanie..." : "🗑️ Usuń avatar"}
+                                        </Button>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     )}
