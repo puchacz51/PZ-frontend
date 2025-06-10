@@ -17,7 +17,6 @@ const ChatPage = () => {
           <h1 className="text-xl font-semibold">Czat zespołu</h1>
           <p className="text-sm text-white/60">Komunikuj się z całym zespołem w czasie rzeczywistym</p>
         </div>
-        {/* 🔧 Fixed height container with proper flex structure */}
         <div className="flex flex-col h-[calc(94vh-72px)]">
           <ChatWindow />
           <ChatInput />
