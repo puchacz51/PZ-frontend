@@ -2,8 +2,8 @@ import { createContext, useContext, useEffect, useState, ReactNode, useCallback 
 import { ChatMessage } from "@/types/chat";
 import { useUser } from "./UserContext";
 import { useWebSocket } from "@/hooks/useWebSocket";
-import { useChatMessages } from "@/hooks/useChatMessages";
 import { WEBSOCKET_CONFIG } from "@/config/websocket";
+import { useChatMessages } from "@/hooks/useChatMessages";
 
 interface ChatContextType {
   messages: ChatMessage[];
@@ -17,6 +17,10 @@ interface ChatContextType {
   joinProject: (projectId: number) => void;
   leaveProject: () => void;
   currentProjectId: number | null;
+  fetchNextPage?: () => Promise<any>;
+  hasNextPage?: boolean;
+  isFetchingNextPage?: boolean;
+  isLoadingHistory?: boolean;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -31,8 +35,11 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     addMessage,
     clearMessages,
     markAllAsRead,
-    setMessagesHistory
-  } = useChatMessages({ userId: user?.id });
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoadingHistory
+  } = useChatMessages({ userId: user?.id, projectId: currentProjectId });
 
   const handleConnect = useCallback(() => {
     if (!user || !webSocket.client) return;
@@ -112,7 +119,11 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       reconnectToChat: webSocket.reconnect,
       joinProject,
       leaveProject,
-      currentProjectId
+      currentProjectId,
+      fetchNextPage,
+      hasNextPage,
+      isFetchingNextPage,
+      isLoadingHistory
     }}>
       {children}
     </ChatContext.Provider>

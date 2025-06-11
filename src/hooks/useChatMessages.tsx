@@ -1,57 +1,84 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { ChatMessage } from '@/types/chat';
 import { isOnChatPage, formatChatNotification } from '@/lib/utils';
+import { useChatHistory } from './useChatHistory';
 
 interface UseChatMessagesProps {
   userId?: number;
+  projectId?: number;
 }
 
-export const useChatMessages = ({ userId }: UseChatMessagesProps = {}) => {
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+export const useChatMessages = ({ userId, projectId }: UseChatMessagesProps = {}) => {
+  const [realtimeMessages, setRealtimeMessages] = useState<ChatMessage[]>([]);
   const [unreadMessages, setUnreadMessages] = useState(0);
 
+  const {
+    messages: historyMessages,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading: isLoadingHistory,
+    refetch: refetchHistory
+  } = useChatHistory({ 
+    projectId, 
+    enabled: true 
+  });
+
+  // Combine history messages with realtime messages
+  const allMessages = [...historyMessages, ...realtimeMessages];
+
   const addMessage = useCallback((message: ChatMessage) => {
-    setMessages(prev => [...prev, message]);
+    // Check if message already exists in history to avoid duplicates
+    const messageExists = historyMessages.some(msg => msg.id === message.id) || 
+                         realtimeMessages.some(msg => msg.id === message.id);
     
-    if (message.sender.id !== userId && !isOnChatPage()) {
-      setUnreadMessages(prev => prev + 1);
+    if (!messageExists) {
+      setRealtimeMessages(prev => [...prev, message]);
       
-      const notification = formatChatNotification(
-        message.sender.firstName, 
-        message.sender.lastName, 
-        message.content
-      );
-      
-      toast.info(
-        () => (
+      if (message.sender.id !== userId && !isOnChatPage()) {
+        setUnreadMessages(prev => prev + 1);
+        
+        const notification = formatChatNotification(
+          message.sender.firstName, 
+          message.sender.lastName, 
+          message.content
+        );
+        
+        toast.info(
           <div>
             <p className="font-bold">{notification.title}</p>
             <p className="text-sm truncate">{notification.message}</p>
           </div>
-        )
-      );
+        );
+      }
     }
-  }, [userId]);
+  }, [userId, historyMessages, realtimeMessages]);
 
   const clearMessages = useCallback(() => {
-    setMessages([]);
-  }, []);
+    setRealtimeMessages([]);
+    refetchHistory();
+  }, [refetchHistory]);
 
   const markAllAsRead = useCallback(() => {
     setUnreadMessages(0);
   }, []);
 
-  const setMessagesHistory = useCallback((history: ChatMessage[]) => {
-    setMessages(history);
-  }, []);
+  // Clear realtime messages when projectId changes
+  useEffect(() => {
+    setRealtimeMessages([]);
+  }, [projectId]);
 
   return {
-    messages,
+    messages: allMessages,
     unreadMessages,
     addMessage,
     clearMessages,
     markAllAsRead,
-    setMessagesHistory
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoadingHistory,
+    refetchHistory
   };
 };
