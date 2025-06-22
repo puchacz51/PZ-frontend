@@ -4,7 +4,6 @@ import { useUser } from "./UserContext";
 import { useWebSocket } from "@/hooks/useWebSocket";
 import { WEBSOCKET_CONFIG } from "@/config/websocket";
 import { useChatMessages } from "@/hooks/useChatMessages";
-
 interface ChatContextType {
   messages: ChatMessage[];
   sendMessage: (content: string, projectId?: number) => void;
