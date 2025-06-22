@@ -8,7 +8,6 @@ import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import axiosInstance from "@/config/axios";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { userService } from '@/api/userService';
 
 interface LoginFormInputs {
     email: string;
@@ -29,35 +28,21 @@ const LoginForm = ({ setIsLoginForm }: { setIsLoginForm: (isLoginForm: boolean) 
                 password: data.password,
             });
 
-            const { accessToken, refreshToken } = response.data;
+            const { accessToken, refreshToken, id, firstName, lastName, email, role } = response.data;
 
             localStorage.setItem("accessToken", accessToken);
             localStorage.setItem("refreshToken", refreshToken);
             
-            // 🔄 Pobieranie pełnego profilu użytkownika z avatarem
-            try {
-                const profileData = await userService.getProfile();
-                const loggedInUser: IUser = {
-                    id: profileData.id,
-                    firstName: profileData.firstName,
-                    lastName: profileData.lastName,
-                    email: profileData.email,
-                    role: profileData.role,
-                    login: profileData.email,
-                    avatarUrl: profileData.avatarUrl
-                };
-                setUser(loggedInUser);
-            } catch (profileError) {
-                console.error('🔄 Failed to fetch user profile:', profileError);
-                // Fallback do podstawowych danych z odpowiedzi logowania
-                const { id, firstName, lastName, email, role } = response.data;
-                const loggedInUser: IUser = {
-                    id, firstName, lastName, email, role,
-                    login: email
-                };
-                setUser(loggedInUser);
-            }
+            const loggedInUser: IUser = {
+                id: id,
+                firstName: firstName,
+                lastName: lastName,
+                email: email,
+                role: role,
+                login: email, 
+            };
 
+            setUser(loggedInUser);
             navigate({ to: "/" });
 
         } catch (err: any) {

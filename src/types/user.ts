@@ -5,7 +5,6 @@ export interface IUser {
     role: string;
     firstName: string;
     lastName: string;
-    avatarUrl?: string;
 }
 
 export interface IUserSummary {
@@ -22,7 +21,7 @@ export const mockUsers: IUser[] = [
         role: "developer",
         firstName: "John",
         lastName: "Doe",
-        avatarUrl: 'https://i.pravatar.cc/150?u=john',
+        avatarUrl: 'https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/6226df1d-daeb-4c81-ae3d-1cf452d072fb/djgcrxm-249f8010-65bb-49dd-a01b-0b1e557ab7de.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzYyMjZkZjFkLWRhZWItNGM4MS1hZTNkLTFjZjQ1MmQwNzJmYlwvZGpnY3J4bS0yNDlmODAxMC02NWJiLTQ5ZGQtYTAxYi0wYjFlNTU3YWI3ZGUuanBnIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.r73v5kg9aX__a8Lx0-mnBA7-8otnZm3Kq9P3azYcjBk',
         createdAt: "2025-04-01"
     },
     {
