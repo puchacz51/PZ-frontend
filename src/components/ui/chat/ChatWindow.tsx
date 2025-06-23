@@ -7,16 +7,34 @@ import { MessageCircle, RefreshCw } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 const ChatWindow = () => {
-  const { messages, isConnected, reconnectFailed, reconnectToChat } = useChat()
+  const { messages, isConnected, reconnectFailed, reconnectToChat, loadMoreMessages, hasMoreMessages, isLoadingMessages } = useChat()
   const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
-
   return (
     <div className="flex-1 overflow-hidden">
       <ScrollArea className="h-full px-2 py-4 bg-black">
+        {hasMoreMessages && (
+          <div className="flex justify-center mb-4">
+            <Button 
+              onClick={loadMoreMessages} 
+              disabled={isLoadingMessages}
+              className="bg-white/10 hover:bg-white/20 text-white border border-white/20"
+            >
+              {isLoadingMessages ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-white mr-2"></div>
+                  Ładowanie...
+                </>
+              ) : (
+                'Załaduj więcej wiadomości'
+              )}
+            </Button>
+          </div>
+        )}
+        
         {messages.length === 0 && isConnected && (
           <div className="flex flex-col items-center justify-center h-full text-center p-6 text-white/60">
             <MessageCircle className="h-12 w-12 mb-2 opacity-20" />

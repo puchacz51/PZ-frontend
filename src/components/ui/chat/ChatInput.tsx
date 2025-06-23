@@ -5,14 +5,13 @@ import { Send } from "lucide-react"
 import { useChat } from "@/context/ChatContext"
 import { useUser } from "@/context/UserContext"
 
-const ChatInput = () => {
-  const [input, setInput] = useState("")
+const ChatInput = () => {  const [input, setInput] = useState("")
   const { sendMessage, isConnected, error } = useChat()
   const { user } = useUser()
 
   if (error) {
-    console.error("Chat error:", error)
-  } 
+    console.error("Chat error:", typeof error === 'string' ? error : (error as Error)?.message || 'Unknown error')
+  }
 
   const handleSend = () => {
     if (!input.trim() || !isConnected || !user) return

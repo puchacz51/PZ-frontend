@@ -40,30 +40,45 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     const storedUser = sessionStorage.getItem("user");
     if (storedUser) {
       const parsedUser = JSON.parse(storedUser);
-      setUser(parsedUser);
-
-      return true;
+      setUser(parsedUser);      return true;
     } else {
       setUser(null);
       sessionStorage.removeItem("user");
       return false;
     }
-  }
+  };
 
   const updateUserProfile = async () => {
     try {
       const profileData = await userService.getProfile();
+      
       if (user) {
-        setUser({
+        const updatedUser = {
           ...user,
           avatarUrl: profileData.avatarUrl,
           firstName: profileData.firstName,
           lastName: profileData.lastName,
           role: profileData.role
-        });
+        };
+        setUser(updatedUser);
+        
+        // Aktualizuj localStorage
+        localStorage.setItem("user", JSON.stringify(updatedUser));
       }
     } catch (error) {
-      console.error('🔄 Failed to update user profile:', error);
+      console.error('Failed to update user profile:', error);
+        // Jeśli błąd jest związany z tokenem (401/403), wyloguj użytkownika
+      if (error && typeof error === 'object' && 'response' in error) {
+        const axiosError = error as { response: { status: number } };
+        if (axiosError.response?.status === 401 || axiosError.response?.status === 403) {
+          console.log('Token seems invalid, logging out...');
+          logout();
+          return;
+        }
+      }
+      
+      // Nie rzucaj błędu dalej - po prostu zaloguj i kontynuuj
+      console.warn('Profile update failed, but continuing with existing user data');
     }
   };
 

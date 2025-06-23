@@ -10,19 +10,24 @@ interface ChatMessageProps {
 const ChatMessage = ({ message }: ChatMessageProps) => {
   const { user } = useUser()
   const isCurrentUser = user?.id === message.sender.id
-
   return (
-    <div className={`flex w-full mb-4 ${isCurrentUser ? "justify-end" : "justify-start"}`}>
-      <div className={`flex items-end gap-3 max-w-[80%] ${isCurrentUser ? "flex-row-reverse" : ""}`}>
-        <Avatar className="cursor-pointer hover:ring-2 hover:ring-white transition-all">
+    <div className={`flex w-full mb-4 ${isCurrentUser ? "justify-start" : "justify-end"}`}>
+      <div className={`flex items-end gap-3 max-w-[80%] ${isCurrentUser ? "" : "flex-row-reverse"}`}>        <Avatar className="cursor-pointer hover:ring-2 hover:ring-white transition-all">
           {message.sender.avatarUrl ? (
-            <AvatarImage src={message.sender.avatarUrl} alt="user avatar" />
-          ) : (
-            <AvatarFallback className="bg-white/20 text-white font-semibold uppercase">
-              {message.sender.firstName?.charAt(0)}
-              {message.sender.lastName?.charAt(0)}
-            </AvatarFallback>
-          )}
+            <AvatarImage 
+              src={message.sender.avatarUrl} 
+              alt={`${message.sender.firstName} ${message.sender.lastName}`}
+              onError={(e) => {
+                console.error('Avatar image failed to load:', message.sender.avatarUrl);
+                // Ukryj element img i pokaż fallback
+                (e.target as HTMLImageElement).style.display = 'none';
+              }}
+            />
+          ) : null}
+          <AvatarFallback className="bg-white/20 text-white font-semibold uppercase">
+            {message.sender.firstName?.charAt(0) || '?'}
+            {message.sender.lastName?.charAt(0) || ''}
+          </AvatarFallback>
         </Avatar>
         <div className={`rounded-xl px-4 py-2 text-sm ${
           isCurrentUser 
