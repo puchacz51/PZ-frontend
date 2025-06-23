@@ -1,3 +1,5 @@
+import { IProjectUser, IProjectUserResponse, transformRoleFromBackend } from './project-user';
+
 export type ProjectStatus = 
     | "Not Started" 
     | "In Progress" 
@@ -36,8 +38,10 @@ export interface IBackendProject {
         firstName: string;
         lastName: string;
         email: string;
+        avatarUrl?: string;
     };
     createdAt: string;
+    assignedUsers: IProjectUserResponse[];
 }
 
 // Frontend format (transformed)
@@ -50,6 +54,7 @@ export interface IProject {
     status: ProjectStatus;
     createdBy: string;
     createdAt: string;
+    assignedUsers: IProjectUser[];
 }
 
 export interface IDeleteResponse {
@@ -91,6 +96,10 @@ export const transformProjectFromBackend = (backendProject: IBackendProject): IP
         endDate: backendProject.endDate,
         status: transformStatusFromBackend(backendProject.status),
         createdBy: `${backendProject.createdBy.firstName} ${backendProject.createdBy.lastName}`,
-        createdAt: backendProject.createdAt
+        createdAt: backendProject.createdAt,
+        assignedUsers: backendProject.assignedUsers?.map(user => ({
+            user: user.user,
+            role: transformRoleFromBackend(user.role)
+        })) || []
     };
 };

@@ -31,10 +31,13 @@ class UserService {
     async getProfile(): Promise<UserProfileResponse> {
         const response = await axiosInstance.get('/users/profile');
         return response.data;
+    }    getAvatarUrl(fileName: string): string {
+        return `${axiosInstance.defaults.baseURL}/users/avatar/${fileName}`;
     }
 
-    getAvatarUrl(fileName: string): string {
-        return `${axiosInstance.defaults.baseURL}/users/avatar/${fileName}`;
+    async getAllUsers(): Promise<UserProfileResponse[]> {
+        const response = await axiosInstance.get('/users');
+        return response.data;
     }
 }
 
