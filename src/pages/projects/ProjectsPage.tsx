@@ -1,10 +1,15 @@
+import ProjectList from "@/components/ui/project/list/ProjectList";
+
 const ProjectsPage = () => {
-    return (
-        <div className="flex flex-col items-center justify-center min-h-full bg-black-100 text-white">
-            <h1 className="text-4xl font-bold mb-8">Projects</h1>
-            <p className="text-lg mb-4">Here are some of my projects:</p>
-        </div>
-    );
+  return (
+    <div className="container mx-auto py-8 px-4">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold tracking-tight text-white">Projekty</h1>
+      </div>
+      
+      <ProjectList />
+    </div>
+  );
 }
 
 export default ProjectsPage;

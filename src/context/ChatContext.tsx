@@ -1,123 +1,128 @@
 import { createContext, useContext, useEffect, useState, ReactNode, useCallback } from "react";
-import { io, Socket } from "socket.io-client";
-import { ChatMessage, ChatMessagePayload } from "@/types/chat";
+import { ChatMessage } from "@/types/chat";
 import { useUser } from "./UserContext";
-import { toast } from "react-toastify";
-
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || "http://localhost:3000";
-
+import { useWebSocket } from "@/hooks/useWebSocket";
+import { WEBSOCKET_CONFIG } from "@/config/websocket";
+import { useChatMessages } from "@/hooks/useChatMessages";
 interface ChatContextType {
   messages: ChatMessage[];
-  sendMessage: (content: string) => void;
+  sendMessage: (content: string, projectId?: number) => void;
   isConnected: boolean;
   error: string | null;
   unreadMessages: number;
   markAllAsRead: () => void;
+  reconnectFailed: boolean;
+  reconnectToChat: () => void;
+  joinProject: (projectId: number) => void;
+  leaveProject: () => void;
+  currentProjectId: number | null;
+  fetchNextPage?: () => Promise<any>;
+  hasNextPage?: boolean;
+  isFetchingNextPage?: boolean;
+  isLoadingHistory?: boolean;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
 export const ChatProvider = ({ children }: { children: ReactNode }) => {
-  const [socket, setSocket] = useState<Socket | null>(null);
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [isConnected, setIsConnected] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [unreadMessages, setUnreadMessages] = useState(0);
+  const [currentProjectId, setCurrentProjectId] = useState<number | null>(null);
   const { user } = useUser();
+  
+  const {
+    messages,
+    unreadMessages,
+    addMessage,
+    clearMessages,
+    markAllAsRead,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoadingHistory
+  } = useChatMessages({ userId: user?.id, projectId: currentProjectId });
 
-  const initializeSocket = useCallback(() => {
-    if (!user) return null;
+  const handleConnect = useCallback(() => {
+    if (!user || !webSocket.client) return;
+
+    // Subscribe to public chat
+    webSocket.subscribe(WEBSOCKET_CONFIG.topics.public, (message) => {
+      const chatMessage: ChatMessage = JSON.parse(message.body);
+      addMessage(chatMessage);
+    });
+
+    // Announce user joining
+    webSocket.publish(
+      WEBSOCKET_CONFIG.endpoints.addUser,
+      JSON.stringify({
+        content: `${user.firstName} ${user.lastName} dołączył do czatu`,
+        senderEmail: user.email,
+        type: 'JOIN'
+      })
+    );
+  }, [user, addMessage]);
+
+  const webSocket = useWebSocket({
+    onConnect: handleConnect,
+    onDisconnect: () => {},
+    onError: () => {}
+  });
+
+  const joinProject = useCallback((projectId: number) => {
+    if (!webSocket.client?.connected || !user) return;
     
-    const newSocket = io(SOCKET_URL, {
-      reconnectionAttempts: 5,
-      reconnectionDelay: 1000,
-      autoConnect: true,
-      auth: {
-        userId: user.id,
-      },
+    setCurrentProjectId(projectId);
+    clearMessages();
+    
+    webSocket.subscribe(WEBSOCKET_CONFIG.topics.project(projectId), (message) => {
+      const chatMessage: ChatMessage = JSON.parse(message.body);
+      addMessage(chatMessage);
     });
+  }, [webSocket.client, user, clearMessages, addMessage]);
 
-    newSocket.on("connect", () => {
-      setIsConnected(true);
-      setError(null);
-    });
+  const leaveProject = useCallback(() => {
+    setCurrentProjectId(null);
+    clearMessages();
+  }, [clearMessages]);
 
-    newSocket.on("disconnect", () => {
-      setIsConnected(false);
-    });
+  const sendMessage = useCallback((content: string, projectId?: number) => {
+    if (!webSocket.client?.connected || !user) return;
 
-    newSocket.on("connect_error", () => {
-      setError("Nie można połączyć się z serwerem czatu.");
-      setIsConnected(false);
-    });
+    const messagePayload = {
+      content,
+      senderEmail: user.email,
+      projectId: projectId || currentProjectId,
+      type: 'CHAT'
+    };
 
-    newSocket.on("message", (message: ChatMessage) => {
-      setMessages((prev) => [...prev, message]);
-      
-      if (message.sender.id !== user.id) {
-        setUnreadMessages(prev => prev + 1);
-        
-        toast.info(
-          <div>
-            <p className="font-bold">{message.sender.firstName} {message.sender.lastName}</p>
-            <p className="text-sm truncate">{message.content}</p>
-          </div>,
-          {
-            position: "top-right",
-            autoClose: 5000,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-          }
-        );
-      }
-    });
-
-    newSocket.on("history", (history: ChatMessage[]) => {
-      setMessages(history);
-    });
-
-    return newSocket;
-  }, [user]);
+    webSocket.publish(WEBSOCKET_CONFIG.endpoints.sendMessage, JSON.stringify(messagePayload));
+  }, [webSocket.client, user, currentProjectId]);
 
   useEffect(() => {
-    let newSocket: Socket | null = null;
-    
     if (user) {
-      newSocket = initializeSocket();
-      if (newSocket) setSocket(newSocket);
+      webSocket.connect();
     }
     
     return () => {
-      if (newSocket) {
-        newSocket.disconnect();
-      }
+      webSocket.disconnect();
     };
-  }, [user, initializeSocket]);
-
-  const sendMessage = (content: string) => {
-    if (!socket || !user) return;
-
-    const messagePayload: ChatMessagePayload = {
-      content,
-      sender: user,
-    };
-
-    socket.emit("message", messagePayload);
-  };
-  
-  const markAllAsRead = () => {
-    setUnreadMessages(0);
-  };
+  }, [user]);
 
   return (
     <ChatContext.Provider value={{ 
       messages, 
       sendMessage, 
-      isConnected, 
-      error, 
+      isConnected: webSocket.isConnected, 
+      error: webSocket.error, 
       unreadMessages,
-      markAllAsRead
+      markAllAsRead,
+      reconnectFailed: webSocket.reconnectFailed,
+      reconnectToChat: webSocket.reconnect,
+      joinProject,
+      leaveProject,
+      currentProjectId,
+      fetchNextPage,
+      hasNextPage,
+      isFetchingNextPage,
+      isLoadingHistory
     }}>
       {children}
     </ChatContext.Provider>

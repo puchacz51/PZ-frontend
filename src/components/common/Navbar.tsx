@@ -7,6 +7,7 @@ import { useUser } from "@/context/UserContext";
 import { useChat } from "@/context/ChatContext";
 import Sidebar from "./Sidebar";
 import Logo from "./Logo";
+import NewBadge from "../ui/NewBadge";
 
 const Navbar = () => {
     const { user } = useUser();
@@ -15,7 +16,7 @@ const Navbar = () => {
     const [menuOpen, setMenuOpen] = useState(false);
     
     const handleChatClick = () => {
-      markAllAsRead();
+        markAllAsRead();
     };
 
     return (
@@ -28,20 +29,23 @@ const Navbar = () => {
 
                 <div className="flex items-center gap-3">
                     {user && (
-                        <Link to="/chat" onClick={handleChatClick} className="relative">
-                            <Button variant="ghost" className="text-white hover:bg-white color-black  rounded-10 w-9 h-9 p-0 cursor-pointer">
-                                <MessageCircle className="h-5 w-5" />
-                            </Button>
-                            {unreadMessages > 0 && (
-                                <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-white text-xs text-black font-bold border-2 border-black">
-                                    {unreadMessages > 9 ? '9+' : unreadMessages}
-                                </span>
-                            )}
-                        </Link>
+                        <>
+                            <Link to="/chat" onClick={handleChatClick} className="relative">
+                                <Button variant="ghost" className="text-white hover:bg-white color-black rounded-10 w-9 h-9 p-0 cursor-pointer">
+                                    <MessageCircle className="h-5 w-5" />
+                                </Button>
+                                {unreadMessages > 0 && (
+                                    <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-white text-xs text-black font-bold border-2 border-black">
+                                        {unreadMessages > 9 ? '9+' : unreadMessages}
+                                    </span>
+                                )}
+                            </Link>
+                        </>
                     )}
-                    
+
                     {user ? (
                         <Link to="/settings">
+                            <NewBadge />
                             <Avatar className="cursor-pointer hover:ring-2 hover:ring-white transition-all">
                                 {user?.avatarUrl ? (
                                     <AvatarImage src={user.avatarUrl} alt="user avatar" />
@@ -54,7 +58,10 @@ const Navbar = () => {
                             </Avatar>
                         </Link>
                     ) : (
-                        <Button className="bg-white text-black hover:bg-white/80 font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center" disabled={location.pathname === "/auth"}>
+                        <Button
+                            className="bg-white text-black hover:bg-white/80 font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+                            disabled={location.pathname === "/auth"}
+                        >
                             <Link to="/auth" className="flex items-center">
                                 <LogIn className="mr-2 h-4 w-4" />
                                 Zaloguj

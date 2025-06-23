@@ -29,7 +29,7 @@ const ChatInput = () => {
   }
 
   return (
-    <div className="flex flex-col gap-2 p-4 bg-black border-t border-white/10">
+    <div className="p-4 bg-black border-t border-white/10 sticky bottom-0 w-full">
       <div className="flex gap-2">
         <Input
           className="flex-1 bg-white/10 text-white border border-white/20 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -41,7 +41,7 @@ const ChatInput = () => {
         />
         <Button 
           onClick={handleSend} 
-          className="hover:invert"
+          className="hover:bg-white hover:text-black"
           disabled={!isConnected || !user || !input.trim()}
         >
           <Send className="h-4 w-4" />
