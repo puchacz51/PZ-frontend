@@ -2,6 +2,7 @@ export * from './auth';
 export * from './user';
 export * from './project';
 export * from './project-user';
+export * from './project-comment';
 export * from './task';
 export * from './task-comment';
 export * from './file';

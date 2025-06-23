@@ -5,6 +5,7 @@ import { IProject } from "@/types/project";
 import ProjectDetails from "@/components/ui/project/detail/ProjectDetails";
 import ProjectTasks from "@/components/ui/project/detail/ProjectTasks";
 import ProjectTeam from "@/components/ui/project/detail/ProjectTeam";
+import ProjectComments from "@/components/ui/project/detail/ProjectComments";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Edit, Trash2 } from "lucide-react";
 import ProjectStatusBadge from "@/components/ui/project/common/ProjectStatusBadge";
@@ -145,10 +146,16 @@ const ProjectDetailsPage = () => {
                     </TabsTrigger>
                     <TabsTrigger value="team" className="data-[state=active]:bg-white hover:bg-white/90 hover:text-black data-[state=active]:text-black ">
                         Zespół
-                    </TabsTrigger>
-                    <TabsTrigger value="files" className="data-[state=active]:bg-white hover:bg-white/90 hover:text-black data-[state=active]:text-black ">
+                    </TabsTrigger>                    <TabsTrigger value="files" className="data-[state=active]:bg-white hover:bg-white/90 hover:text-black data-[state=active]:text-black ">
                         <NewBadge />
                         Pliki
+                    </TabsTrigger>
+                    <TabsTrigger value="comments" className="data-[state=active]:bg-white hover:bg-white/90 hover:text-black data-[state=active]:text-black ">
+                        Komentarze {project.commentCount !== undefined && project.commentCount > 0 && (
+                            <span className="ml-1 px-1.5 py-0.5 text-xs bg-blue-600 rounded-full text-white">
+                                {project.commentCount}
+                            </span>
+                        )}
                     </TabsTrigger>
                 </TabsList>
 
@@ -164,6 +171,10 @@ const ProjectDetailsPage = () => {
                     <ProjectTeam projectId={project.id} />
                 </TabsContent>                <TabsContent value="files" className="pt-4">
                     <ProjectFilesManager projectId={project.id} />
+                </TabsContent>
+
+                <TabsContent value="comments" className="pt-4">
+                    <ProjectComments projectId={project.id} />
                 </TabsContent>
             </Tabs>
 

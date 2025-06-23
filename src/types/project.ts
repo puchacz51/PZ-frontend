@@ -42,6 +42,7 @@ export interface IBackendProject {
     };
     createdAt: string;
     assignedUsers: IProjectUserResponse[];
+    commentCount?: number;
 }
 
 // Frontend format (transformed)
@@ -55,6 +56,7 @@ export interface IProject {
     createdBy: string;
     createdAt: string;
     assignedUsers: IProjectUser[];
+    commentCount?: number;
 }
 
 export interface IDeleteResponse {
@@ -100,6 +102,7 @@ export const transformProjectFromBackend = (backendProject: IBackendProject): IP
         assignedUsers: backendProject.assignedUsers?.map(user => ({
             user: user.user,
             role: transformRoleFromBackend(user.role)
-        })) || []
+        })) || [],
+        commentCount: backendProject.commentCount || 0
     };
 };
