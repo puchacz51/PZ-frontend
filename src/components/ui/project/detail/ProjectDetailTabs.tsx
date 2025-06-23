@@ -1,15 +1,11 @@
 import { useState } from 'react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { IProject } from '@/types/project';
-import { IFile, mockFiles } from '@/types/file';
 import ProjectFilesManager from './ProjectFilesManager';
 
 interface ProjectDetailTabsProps {
   project: IProject;
-  projectFiles?: IFile[];
 }
-
-const projectFiles = mockFiles;
 
 const ProjectDetailTabs: React.FC<ProjectDetailTabsProps> = ({ project }) => {
     const [activeTab, setActiveTab] = useState('info');
@@ -31,12 +27,12 @@ const ProjectDetailTabs: React.FC<ProjectDetailTabsProps> = ({ project }) => {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <h3 className="text-md font-medium text-white">Data rozpoczęcia</h3>
-              <p className="text-white/80">{new Date(project.startDate).toLocaleDateString()}</p>
+              <p className="text-white/80">{new Date(project.startDate).toLocaleDateString('pl-PL')}</p>
             </div>
             
             <div>
               <h3 className="text-md font-medium text-white">Data zakończenia</h3>
-              <p className="text-white/80">{new Date(project.endDate).toLocaleDateString()}</p>
+              <p className="text-white/80">{new Date(project.endDate).toLocaleDateString('pl-PL')}</p>
             </div>
           </div>
           
@@ -48,7 +44,7 @@ const ProjectDetailTabs: React.FC<ProjectDetailTabsProps> = ({ project }) => {
       </TabsContent>
       
       <TabsContent value="files" className="pt-4">
-        <ProjectFilesManager projectId={project.id} initialFiles={projectFiles} />
+        <ProjectFilesManager projectId={project.id} />
       </TabsContent>
     </Tabs>
   );

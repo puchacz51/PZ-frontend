@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "@tanstack/react-router";
-import { LogOut, MessageCircle, FolderKanban, X, Settings } from "lucide-react";
+import { LogOut, MessageCircle, FolderKanban, X, Settings, FileText } from "lucide-react";
 import clsx from "clsx";
 import { useUser } from "@/context/UserContext";
 import { useChat } from "@/context/ChatContext";
@@ -38,11 +38,14 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
                     </div>
 
                     {/* Środkowa część: linki + logout na dole */}
-                    <div className="flex flex-col justify-between flex-1 p-4 text-white">
-                        <div className="flex flex-col space-y-2">
+                    <div className="flex flex-col justify-between flex-1 p-4 text-white">                        <div className="flex flex-col space-y-2">
                             <Link to="/projects" onClick={onClose} className="flex items-center gap-2 hover:underline hover:font-semibold">
                                 <FolderKanban size={18} />
-                                Projects
+                                Projekty
+                            </Link>
+                            <Link to="/files" onClick={onClose} className="flex items-center gap-2 hover:underline hover:font-semibold">
+                                <FileText size={18} />
+                                Moje pliki
                             </Link>
                             <Link to="/chat" onClick={handleChatClick} className="flex items-center gap-2 hover:underline hover:font-semibold">
                                 <MessageCircle size={18} />

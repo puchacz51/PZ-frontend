@@ -15,6 +15,7 @@ const ProjectsPage = lazy(() => import('@/pages/projects/ProjectsPage'));
 const SettingsPage = lazy(() => import('@/pages/settings/SettingsPage'));
 const ChatPage = lazy(() => import('@/pages/chat/ChatPage'));
 const ProjectDetailsPage = lazy(() => import('@/pages/projects/ProjectDetailsPage'));
+const MyFilesPage = lazy(() => import('@/pages/files/MyFilesPage'));
 
 const checkAuth = async (ctx: Context) => {    
     const context = ctx.context as IUserContextType;
@@ -73,13 +74,22 @@ const chatRoute = createRoute({
     pendingComponent: Loading
 });
 
+const myFilesRoute = createRoute({
+    getParentRoute: () => rootRoute,
+    path: "/files",
+    component: MyFilesPage,
+    beforeLoad: checkAuth,
+    pendingComponent: Loading
+});
+
 const routeTree = rootRoute.addChildren([
     indexRoute, 
     authRoute, 
     projectsRoute, 
     projectDetailsRoute, 
     settingsRoute, 
-    chatRoute
+    chatRoute,
+    myFilesRoute
 ]);
 
 export const router = createRouter({ 

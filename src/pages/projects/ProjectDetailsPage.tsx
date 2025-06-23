@@ -162,10 +162,8 @@ const ProjectDetailsPage = () => {
 
                 <TabsContent value="team" className="mt-0">
                     <ProjectTeam projectId={project.id} />
-                </TabsContent>
-
-                <TabsContent value="files" className="pt-4">
-                    <ProjectFilesManager projectId={project.id} initialFiles={projectFiles} />
+                </TabsContent>                <TabsContent value="files" className="pt-4">
+                    <ProjectFilesManager projectId={project.id} />
                 </TabsContent>
             </Tabs>
 
