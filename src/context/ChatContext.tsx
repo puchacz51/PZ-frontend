@@ -198,8 +198,8 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     <ChatContext.Provider value={{ 
       messages, 
       sendMessage, 
-      isConnected: webSocket.isConnected, 
-      error: webSocket.error, 
+      isConnected: isConnected, 
+      error: error, 
       unreadMessages,
       markAllAsRead,
       reconnectFailed,
