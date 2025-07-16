@@ -1,5 +1,4 @@
 import axiosInstance from '@/config/axios';
-import { IUser } from '@/types/user';
 
 export interface UserProfileResponse {
     id: number;
@@ -31,7 +30,8 @@ class UserService {
     async getProfile(): Promise<UserProfileResponse> {
         const response = await axiosInstance.get('/users/profile');
         return response.data;
-    }    getAvatarUrl(fileName: string): string {
+    }    
+    async getAvatarUrl(fileName: string): Promise<string> {
         return `${axiosInstance.defaults.baseURL}/users/avatar/${fileName}`;
     }
 

@@ -1,13 +1,11 @@
 import { IUser } from "@/types/user";
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { userService } from '@/api/userService';
 
 export interface IUserContextType {
   user: IUser | null;
   setUser: (user: IUser | null) => void;
   logout: () => void;
   authenticateUser: () => Promise<boolean>;
-  updateUserProfile: () => Promise<void>;  // Nowa metoda
 }
 
 const UserContext = createContext<IUserContextType | undefined>(undefined);
@@ -83,7 +81,7 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <UserContext.Provider value={{ user, setUser, logout, authenticateUser, updateUserProfile }}>
+    <UserContext.Provider value={{ user, setUser, logout, authenticateUser }}>
       {children}
     </UserContext.Provider>
   );

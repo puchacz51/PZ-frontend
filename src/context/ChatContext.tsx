@@ -7,7 +7,7 @@ import { chatService } from "@/services/chatRestService";
 
 interface ChatContextType {
   messages: ChatMessage[];
-  sendMessage: (content: string) => void;
+  sendMessage: (content: string, projectId?: number) => void;
   isConnected: boolean;
   error: string | null;
   unreadMessages: number;
@@ -198,8 +198,8 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     <ChatContext.Provider value={{ 
       messages, 
       sendMessage, 
-      isConnected, 
-      error, 
+      isConnected: webSocket.isConnected, 
+      error: webSocket.error, 
       unreadMessages,
       markAllAsRead,
       reconnectFailed,
